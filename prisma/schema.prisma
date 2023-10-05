@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model File {
+  id          String       @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  extension   String
+  awskey      String       @unique
+  contentType String
+  status      RecordStatus @default(DELETED)
+
+  owner   User    @relation(fields: [ownerId], references: [id])
+  ownerId String  @db.Uuid
+  Label   Label[]
+
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([ownerId])
+  @@map("file")
+}
+
+model Label {
+  id     String @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String @db.Uuid
+  name   String @default("New Label")
+  color  String @default("rgba(19, 255, 0, 1)")
+  File   File[]
+
+  @@map("label")
+}
+
+enum RecordStatus {
+  AVTIVE
+  DELETED
+}
+
+model User {
+  id             String       @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  password       String
+  email          String       @unique
+  username       String       @default("Annonymous")
+  email_verified Boolean?     @default(false)
+  file           File[]
+  status         RecordStatus
+
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@map("user")
+}

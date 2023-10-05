@@ -1,15 +1,21 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import 'reflect-metadata';
 
-dotenv.config();
+// import { Logger } from './lib/logger';
 
-const app: Express = express();
-const port = process.env.PORT;
+// const log = new Logger(__filename);
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
+// this shim is required
+import { createExpressServer, useContainer } from 'routing-controllers';
+import { FileController } from './api/controllers/FileController';
+import Container from 'typedi';
+
+useContainer(Container);
+
+// creates express app, registers all controller routes and returns you express app instance
+const app = createExpressServer({
+    controllers: [FileController],
 });
 
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+// run express application on port 3000
+app.listen(3000);
+
