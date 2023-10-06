@@ -40,18 +40,18 @@ model Label {
 }
 
 enum RecordStatus {
-  AVTIVE
+  ACTIVE
   DELETED
 }
 
 model User {
-  id             String       @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id             String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   password       String
-  email          String       @unique
-  username       String       @default("Annonymous")
-  email_verified Boolean?     @default(false)
+  email          String        @unique
+  username       String        @default("Annonymous")
+  email_verified Boolean?      @default(false)
   file           File[]
-  status         RecordStatus
+  status         RecordStatus? @default(ACTIVE)
 
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)

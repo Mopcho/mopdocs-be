@@ -7,8 +7,8 @@ import { Service } from "typedi";
 export class FileController {
     constructor(private fileService: FileService) { }
 
-    @Get('/test')
+    @Get()
     getAll() {
         return this.fileService.find();
     }
-}   
+}

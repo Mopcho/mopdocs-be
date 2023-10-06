@@ -16,5 +16,4 @@ export class FileService {
         this.log.info('Find all pets');
         return prisma.file.findMany();
     }
-
 }

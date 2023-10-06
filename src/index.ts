@@ -8,12 +8,13 @@ import 'reflect-metadata';
 import { createExpressServer, useContainer } from 'routing-controllers';
 import { FileController } from './api/controllers/FileController';
 import Container from 'typedi';
+import { AuthController } from './api/controllers/AuthController';
 
 useContainer(Container);
 
 // creates express app, registers all controller routes and returns you express app instance
 const app = createExpressServer({
-    controllers: [FileController],
+    controllers: [FileController, AuthController],
 });
 
 // run express application on port 3000
