@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
