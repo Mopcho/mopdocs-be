@@ -1,13 +1,15 @@
 import { Service } from "typedi";
-import { prisma } from "../prisma";
+import { prisma } from "./prisma";
 import { Prisma } from "@prisma/client";
 
 @Service()
-export class PrismaAdapter {
+export class Database {
     constructor() { }
 
-    createUser() {
-
+    async createUser(createData: Prisma.UserCreateInput) {
+        return prisma.user.create({
+            data: createData
+        });
     }
 
     async findUser(searchData?: Prisma.UserScalarWhereWithAggregatesInput) {

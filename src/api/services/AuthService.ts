@@ -1,7 +1,7 @@
-import { Prisma } from "@prisma/client";
 import { comparePassword, hashPassword } from "../utils";
 import { Service } from "typedi";
-import { DatabaseLayer } from "src/database/DatabaseLayer";
+import { Database } from "src/database/Database";
+import { UserCreateInput } from "src/database/types";
 
 export interface UserLoginData {
     email: string;
@@ -10,12 +10,12 @@ export interface UserLoginData {
 
 @Service()
 export class AuthService {
-    constructor(private readonly database: DatabaseLayer) { }
+    constructor(private readonly database: Database) { }
 
-    public async register(userData: Prisma.UserCreateInput) {
+    public async register(userData: UserCreateInput) {
         const hashedPassword = await hashPassword(userData.password);
         userData.password = hashedPassword;
-        const response = this.database.createUser();
+        const response = this.database.createUser(userData);
 
         return response;
     }
