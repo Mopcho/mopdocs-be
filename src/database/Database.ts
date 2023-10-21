@@ -12,9 +12,15 @@ export class Database {
         });
     }
 
-    async findUser(searchData?: Prisma.UserScalarWhereWithAggregatesInput) {
+    async findUser(searchData?: Prisma.UserWhereInput) {
         return prisma.user.findFirst({
             where: searchData,
         });
+    }
+
+    async findUsers(searchData?: Prisma.UserWhereInput) {
+        return prisma.user.findMany({
+            where: searchData
+        })
     }
 }
