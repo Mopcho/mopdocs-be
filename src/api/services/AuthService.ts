@@ -1,14 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "../../database/prisma";
-import { Service } from "typedi";
-import { comparePassword, hashPassword } from "./utils";
+import { comparePassword, hashPassword } from "../utils";
 
 export interface UserLoginData {
     email: string;
     password: string;
 }
 
-@Service()
 export class AuthService {
     constructor() { }
 
