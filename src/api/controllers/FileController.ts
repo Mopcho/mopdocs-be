@@ -5,7 +5,7 @@ import { FileService } from "../services/FileService";
 export class FileController {
     constructor(private fileService: FileService) { }
 
-    getAll() {
+    public getAll() {
         return this.fileService.find();
     }
 }

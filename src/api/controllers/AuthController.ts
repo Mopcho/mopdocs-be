@@ -7,7 +7,6 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     public register(userCreateData: Prisma.UserCreateInput) {
-        console.log(userCreateData);
         return this.authService.register(userCreateData);
     }
 
