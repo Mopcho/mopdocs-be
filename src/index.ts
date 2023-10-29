@@ -3,8 +3,14 @@ import express from 'express';
 import expressSession from 'express-session';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import { PrismaClient } from '@prisma/client';
+import { useContainer, useExpressServer } from 'routing-controllers';
+import { AuthController } from './api/controllers/AuthController';
+import { FileController } from './api/controllers/FileController';
+import Container from 'typedi';
 
 const app = express();
+
+useContainer(Container);
 
 app.use(express.json());
 
@@ -27,5 +33,12 @@ app.use(
     })
 );
 
-app.listen(3000);
+useExpressServer(app, {
+    routePrefix: '/api',
+    controllers: [AuthController, FileController],
+});
+
+app.listen(3000, () => {
+    console.log("Listen on port 3000");
+});
 

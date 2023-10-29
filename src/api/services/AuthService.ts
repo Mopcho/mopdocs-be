@@ -1,7 +1,9 @@
+
+import { Database } from "src/database/db";
 import { comparePassword, hashPassword } from "../utils";
 import { Service } from "typedi";
-import { Database } from "src/database/Database";
 import { UserCreateInput } from "src/database/types";
+
 
 export interface UserLoginData {
     email: string;
