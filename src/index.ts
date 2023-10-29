@@ -12,8 +12,10 @@ import { configure, format, transports } from 'winston';
 
 const app = express();
 
+// Configure IoC containers
 useContainer(Container);
 
+// Configure Winston
 configure({
     transports: [
         new transports.Console({
@@ -27,8 +29,10 @@ configure({
     ],
 });
 
+// Configure JSON
 app.use(express.json());
 
+// Configure expressSession with Prisma
 app.use(
     expressSession({
         cookie: {
@@ -48,6 +52,7 @@ app.use(
     })
 );
 
+// Configure express, add controllers, add options etc..
 useExpressServer(app, {
     routePrefix: '/api',
     controllers: [AuthController, FileController],
