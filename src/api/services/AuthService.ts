@@ -3,6 +3,7 @@ import { Database } from "src/database/db";
 import { comparePassword, hashPassword } from "../utils";
 import { Service } from "typedi";
 import { UserCreateInput } from "src/database/types";
+import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 
 
 export interface UserLoginData {
@@ -23,16 +24,16 @@ export class AuthService {
     }
 
     public async login(userData: UserLoginData) {
-        const user = await this.database.findUser();
+        const user = await this.database.findUser({ email: userData.email });
 
         if (!user) {
-            return undefined;
+            throw new InvalidCredentialsError();
         }
 
         const isPasswordCorrect = await comparePassword(user.password, userData.password);
 
         if (!isPasswordCorrect) {
-            return undefined;
+            throw new InvalidCredentialsError();
         }
 
         return true;

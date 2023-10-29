@@ -7,6 +7,7 @@ import { useContainer, useExpressServer } from 'routing-controllers';
 import { AuthController } from './api/controllers/AuthController';
 import { FileController } from './api/controllers/FileController';
 import Container from 'typedi';
+import { GlobalErrorHandler } from './api/middlewares/GlobalErrorHandler';
 
 const app = express();
 
@@ -36,6 +37,10 @@ app.use(
 useExpressServer(app, {
     routePrefix: '/api',
     controllers: [AuthController, FileController],
+    defaultErrorHandler: false,
+    middlewares: [
+        GlobalErrorHandler
+    ]
 });
 
 app.listen(3000, () => {
