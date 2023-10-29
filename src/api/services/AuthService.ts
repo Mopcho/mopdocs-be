@@ -4,7 +4,7 @@ import { comparePassword, hashPassword } from "../utils";
 import { Service } from "typedi";
 import { UserCreateInput } from "src/database/types";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
-
+import { Logger, LoggerInterface } from "src/decorators/Logger";
 
 export interface UserLoginData {
     email: string;
@@ -13,9 +13,10 @@ export interface UserLoginData {
 
 @Service()
 export class AuthService {
-    constructor(private readonly database: Database) { }
+    constructor(private readonly database: Database, @Logger(__filename) private log: LoggerInterface) { }
 
     public async register(userData: UserCreateInput) {
+        this.log.info("Register hit");
         const hashedPassword = await hashPassword(userData.password);
         userData.password = hashedPassword;
         const response = this.database.createUser(userData);
@@ -24,6 +25,7 @@ export class AuthService {
     }
 
     public async login(userData: UserLoginData) {
+        this.log.info("Login hit");
         const user = await this.database.findUser({ email: userData.email });
 
         if (!user) {

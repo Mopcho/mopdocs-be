@@ -8,10 +8,24 @@ import { AuthController } from './api/controllers/AuthController';
 import { FileController } from './api/controllers/FileController';
 import Container from 'typedi';
 import { GlobalErrorHandler } from './api/middlewares/GlobalErrorHandler';
+import { configure, format, transports } from 'winston';
 
 const app = express();
 
 useContainer(Container);
+
+configure({
+    transports: [
+        new transports.Console({
+            level: 'debug',
+            handleExceptions: true,
+            format: format.combine(
+                format.colorize(),
+                format.simple()
+            ),
+        }),
+    ],
+});
 
 app.use(express.json());
 
