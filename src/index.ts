@@ -9,6 +9,7 @@ import { FileController } from './api/controllers/FileController';
 import Container from 'typedi';
 import { GlobalErrorHandler } from './api/middlewares/GlobalErrorHandler';
 import { configure, format, transports } from 'winston';
+import { isAuthenticated } from './api/middlewares/IsAuthenticated';
 
 const app = express();
 
@@ -38,8 +39,8 @@ app.use(
         cookie: {
             maxAge: 7 * 24 * 60 * 60 * 1000
         },
-        secret: 'a santa at nasa asda asd asd',
-        resave: true,
+        secret: process.env.SESSION_SECRET,
+        resave: false,
         saveUninitialized: true,
         store: new PrismaSessionStore(
             new PrismaClient(),
@@ -58,7 +59,8 @@ useExpressServer(app, {
     controllers: [AuthController, FileController],
     defaultErrorHandler: false,
     middlewares: [
-        GlobalErrorHandler
+        GlobalErrorHandler,
+        isAuthenticated
     ]
 });
 

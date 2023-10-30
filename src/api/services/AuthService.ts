@@ -38,6 +38,10 @@ export class AuthService {
             throw new InvalidCredentialsError();
         }
 
-        return true;
+        return {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+        };
     }
 }
