@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { AuthService, UserLoginData } from "../services/AuthService";
 import { Service } from "typedi";
-import { Body, Get, JsonController, Post, Req, UseBefore } from "routing-controllers";
-import { isAuthenticated } from "../middlewares/IsAuthenticated";
+import { Body, Get, JsonController, Post, Req } from "routing-controllers";
+import { responseFormatter } from "../utils";
 
 @Service()
 @JsonController('/auth')
@@ -11,7 +11,7 @@ export class AuthController {
 
     @Post('/register')
     public register(@Body() userCreateData: Prisma.UserCreateInput) {
-        return this.authService.register(userCreateData);
+        return responseFormatter(this.authService.register(userCreateData));
     }
 
     @Post('/login')
@@ -20,13 +20,12 @@ export class AuthController {
 
         request.session.userId = user.id;
 
-        return user;
+        return responseFormatter(user);
     }
 
     @Get('/isAuth')
-    @UseBefore(isAuthenticated)
     public async isAuth(@Req() req) {
-        return Boolean(req.session.userId);
+        return responseFormatter({ isAuth: Boolean(req.session.userId) });
     }
 
     @Get('/logout')
@@ -35,6 +34,6 @@ export class AuthController {
             console.log(err);
         })
 
-        return true;
+        return responseFormatter({ ok: true });
     }
 }
