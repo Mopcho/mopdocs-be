@@ -26,7 +26,7 @@ export class AuthService {
 
     public async login(userData: UserLoginData) {
         this.log.info("Login hit");
-        const user = await this.database.findUser({ email: userData.email });
+        const user = await this.database.findUnique({ email: userData.email });
 
         if (!user) {
             throw new InvalidCredentialsError();

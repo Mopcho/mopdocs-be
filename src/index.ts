@@ -10,8 +10,11 @@ import Container from 'typedi';
 import { GlobalErrorHandler } from './api/middlewares/GlobalErrorHandler';
 import { configure, format, transports } from 'winston';
 import { isAuthenticated } from './api/middlewares/IsAuthenticated';
+import cors from 'cors';
 
 const app = express();
+
+app.use(cors());
 
 // Configure IoC containers
 useContainer(Container);

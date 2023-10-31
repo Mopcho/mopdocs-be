@@ -18,8 +18,8 @@ export class Database {
         });
     }
 
-    async findUnique(searchData?: Prisma.UserWhereUniqueInput) {
-        return prisma.user.findFirst({
+    async findUnique(searchData: Prisma.UserWhereUniqueInput) {
+        return prisma.user.findUnique({
             where: searchData,
         });
     }
