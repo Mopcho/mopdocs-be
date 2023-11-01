@@ -22,7 +22,9 @@
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.10.4",
     "typedi": "^0.10.0",
-    "winston": "^3.11.0"
+    "winston": "^3.11.0",
+    "zod": "^3.22.4",
+    "zod-validation-error": "^2.1.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

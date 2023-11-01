@@ -6,6 +6,9 @@ import { UserCreateInput } from "src/database/types";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { Logger, LoggerInterface } from "src/decorators/Logger";
 import { ValidationError } from "../errors/ValidationError";
+import { UserValidator } from "../validators";
+import { ZodError } from "zod";
+import { fromZodError } from "zod-validation-error";
 
 export interface UserLoginData {
     email: string;
@@ -17,6 +20,13 @@ export class AuthService {
     constructor(private readonly database: Database, @Logger(__filename) private log: LoggerInterface) { }
 
     public async register(userData: UserCreateInput) {
+        try {
+            UserValidator.parse(userData);
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                throw new ValidationError(fromZodError(err).message)
+            }
+        }
         this.log.info("Register hit");
         if (!userData.password || !userData.email) {
             throw new ValidationError('All fields must be filled');
@@ -29,6 +39,13 @@ export class AuthService {
     }
 
     public async login(userData: UserLoginData) {
+        try {
+            UserValidator.parse(userData);
+        } catch (err: unknown) {
+            if (err instanceof ZodError) {
+                throw new ValidationError(fromZodError(err).message)
+            }
+        }
         this.log.info("Login hit");
         const user = await this.database.findUnique({ email: userData.email });
 
