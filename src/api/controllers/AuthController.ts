@@ -10,8 +10,9 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('/register')
-    public register(@Body() userCreateData: Prisma.UserCreateInput) {
-        return responseFormatter(this.authService.register(userCreateData));
+    public async register(@Body() userCreateData: Prisma.UserCreateInput) {
+        const serviceResponse = await this.authService.register(userCreateData)
+        return responseFormatter(serviceResponse);
     }
 
     @Post('/login')

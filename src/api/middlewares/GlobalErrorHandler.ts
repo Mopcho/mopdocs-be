@@ -14,6 +14,7 @@ export class GlobalErrorHandler implements ExpressErrorMiddlewareInterface {
         } else {
             response.status(500).json(responseFormatter(null, new InternalServerError("Unhandled Error")));
             this.log.error('UnhandledError: ', error);
+            console.error(error);
         }
     }
 }

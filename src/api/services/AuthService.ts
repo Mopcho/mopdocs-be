@@ -5,6 +5,7 @@ import { Service } from "typedi";
 import { UserCreateInput } from "src/database/types";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { Logger, LoggerInterface } from "src/decorators/Logger";
+import { ValidationError } from "../errors/ValidationError";
 
 export interface UserLoginData {
     email: string;
@@ -17,6 +18,9 @@ export class AuthService {
 
     public async register(userData: UserCreateInput) {
         this.log.info("Register hit");
+        if (!userData.password || !userData.email) {
+            throw new ValidationError('All fields must be filled');
+        }
         const hashedPassword = await hashPassword(userData.password);
         userData.password = hashedPassword;
         const response = this.database.createUser(userData);
