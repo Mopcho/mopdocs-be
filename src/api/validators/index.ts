@@ -5,3 +5,8 @@ export const UserValidator = z.object({
     password: z.string().min(8).max(32),
     email: z.string().email(),
 });
+
+export const UserLoginDataValidator = z.object({
+    password: z.string(),
+    email: z.string().email(),
+});

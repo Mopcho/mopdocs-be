@@ -6,7 +6,7 @@ import { UserCreateInput } from "src/database/types";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { Logger, LoggerInterface } from "src/decorators/Logger";
 import { ValidationError } from "../errors/ValidationError";
-import { UserValidator } from "../validators";
+import { UserLoginDataValidator, UserValidator } from "../validators";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 
@@ -40,7 +40,7 @@ export class AuthService {
 
     public async login(userData: UserLoginData) {
         try {
-            UserValidator.parse(userData);
+            UserLoginDataValidator.parse(userData);
         } catch (err: unknown) {
             if (err instanceof ZodError) {
                 throw new ValidationError(fromZodError(err).message)
