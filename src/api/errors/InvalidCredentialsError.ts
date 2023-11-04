@@ -9,7 +9,7 @@ export class InvalidCredentialsError extends HttpError {
     toJSON() {
         return {
             status: this.httpCode,
-            code: 'invalid-credentials',
+            errorCode: 'invalid-credentials',
             message: this.message,
         };
     }

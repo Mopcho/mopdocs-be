@@ -5,7 +5,7 @@ import { Service } from "typedi";
 export class isAuthenticated implements ExpressMiddlewareInterface {
     use(request: any, response: any, next: (err?: any) => any) {
         console.log(request.session);
-        if (request.session.userId) {
+        if (request.session.user) {
             next();
         } else {
             throw new UnauthorizedError();

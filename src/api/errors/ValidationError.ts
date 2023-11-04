@@ -9,7 +9,7 @@ export class ValidationError extends HttpError {
     toJSON() {
         return {
             status: this.httpCode,
-            code: 'validation-error',
+            errorCode: 'validation-error',
             message: this.message,
         };
     }

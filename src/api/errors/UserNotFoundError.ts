@@ -9,7 +9,7 @@ export class UserNotFoundError extends HttpError {
     toJSON() {
         return {
             status: this.httpCode,
-            code: 'user-not-found',
+            errorCode: 'user-not-found',
             message: this.message,
         };
     }

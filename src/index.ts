@@ -11,6 +11,7 @@ import { GlobalErrorHandler } from './api/middlewares/GlobalErrorHandler';
 import { configure, format, transports } from 'winston';
 import { isAuthenticated } from './api/middlewares/IsAuthenticated';
 import cors from 'cors';
+import { DeleteSessionOnExpiredDate } from './api/middlewares/CheckSession';
 
 const app = express();
 
@@ -40,11 +41,12 @@ app.use(express.json());
 app.use(
     expressSession({
         cookie: {
-            maxAge: 7 * 24 * 60 * 60 * 1000
+            maxAge: 60 * 10 * 1000,
+            httpOnly: true,
         },
         secret: process.env.SESSION_SECRET,
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         store: new PrismaSessionStore(
             new PrismaClient(),
             {
@@ -63,6 +65,7 @@ useExpressServer(app, {
     defaultErrorHandler: false,
     middlewares: [
         GlobalErrorHandler,
+        DeleteSessionOnExpiredDate,
         isAuthenticated
     ]
 });

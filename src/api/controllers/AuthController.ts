@@ -19,14 +19,14 @@ export class AuthController {
     public async login(@Body() userLoginData: UserLoginData, @Req() request) {
         const user = await this.authService.login(userLoginData);
 
-        request.session.userId = user.id;
+        request.session.user = user;
 
         return responseFormatter(user);
     }
 
     @Get('/isAuth')
     public async isAuth(@Req() req) {
-        return responseFormatter({ isAuth: Boolean(req.session.userId) });
+        return responseFormatter({ isAuth: Boolean(req.session.user) });
     }
 
     @Get('/logout')
