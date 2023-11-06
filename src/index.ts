@@ -10,12 +10,15 @@ import Container from 'typedi';
 import { GlobalErrorHandler } from './api/middlewares/GlobalErrorHandler';
 import { configure, format, transports } from 'winston';
 import { isAuthenticated } from './api/middlewares/IsAuthenticated';
-import cors from 'cors';
+import { CorsOptions } from 'cors';
 import { DeleteSessionOnExpiredDate } from './api/middlewares/CheckSession';
 
 const app = express();
 
-app.use(cors());
+const corsConfig: CorsOptions = {
+    origin: 'http://localhost:3001',
+    credentials: true,
+}
 
 // Configure IoC containers
 useContainer(Container);
@@ -41,8 +44,9 @@ app.use(express.json());
 app.use(
     expressSession({
         cookie: {
-            maxAge: 60 * 10 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,
+            sameSite: 'strict'
         },
         secret: process.env.SESSION_SECRET,
         resave: false,
@@ -61,6 +65,7 @@ app.use(
 // Configure express, add controllers, add options etc..
 useExpressServer(app, {
     routePrefix: '/api',
+    cors: corsConfig,
     controllers: [AuthController, FileController],
     defaultErrorHandler: false,
     middlewares: [

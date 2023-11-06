@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { AuthService, UserLoginData } from "../services/AuthService";
 import { Service } from "typedi";
-import { Body, Get, JsonController, Post, Req } from "routing-controllers";
+import { Body, Delete, Get, JsonController, Post, Req } from "routing-controllers";
 import { responseFormatter } from "../utils";
 
 @Service()
@@ -22,6 +22,16 @@ export class AuthController {
         request.session.user = user;
 
         return responseFormatter(user);
+    }
+
+    @Get('/sessions')
+    public async getSessions() {
+        return await this.authService.getSessions();
+    }
+
+    @Delete('/sessions')
+    public async deleteAllSessions() {
+        return await this.authService.deleteAllSessions();
     }
 
     @Get('/isAuth')

@@ -38,6 +38,14 @@ export class AuthService {
         return response;
     }
 
+    public async getSessions() {
+        return this.database.getSessions();
+    }
+
+    public async deleteAllSessions() {
+        return this.database.deleteAllSessions();
+    }
+
     public async login(userData: UserLoginData) {
         try {
             UserLoginDataValidator.parse(userData);

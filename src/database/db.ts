@@ -6,6 +6,14 @@ import { Prisma } from "@prisma/client";
 export class Database {
     constructor() { }
 
+    async getSessions() {
+        return prisma.session.findMany();
+    }
+
+    async deleteAllSessions() {
+        return prisma.session.deleteMany();
+    }
+
     async createUser(createData: Prisma.UserCreateInput) {
         return prisma.user.create({
             data: createData
