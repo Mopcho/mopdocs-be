@@ -12,6 +12,13 @@ import { configure, format, transports } from 'winston';
 import { isAuthenticated } from './api/middlewares/IsAuthenticated';
 import { CorsOptions } from 'cors';
 import { DeleteSessionOnExpiredDate } from './api/middlewares/CheckSession';
+import { S3 } from '@aws-sdk/client-s3';
+
+// Configure AWS S3
+const accessKeyId = process.env.AWS_KEY;
+const secretAccessKey = process.env.AWS_SECRET;
+const region = process.env.AWS_BUCKET_REGION;
+Container.set('s3Client', new S3({ credentials: { accessKeyId, secretAccessKey }, region }));
 
 const app = express();
 

@@ -1,14 +1,17 @@
 import { Service } from "typedi";
 import { FileService } from "../services/FileService";
-import { Get, JsonController } from "routing-controllers";
+import { JsonController, Post, UseBefore } from "routing-controllers";
+import { isAuthenticated } from "../middlewares/IsAuthenticated";
+import { responseFormatter } from "../utils";
 
 @Service()
 @JsonController('/files')
+@UseBefore(isAuthenticated)
 export class FileController {
     constructor(private fileService: FileService) { }
 
-    @Get()
-    public getAll() {
-        return this.fileService.find();
+    @Post()
+    public async getSignature() {
+        return responseFormatter(await this.fileService.getSignature());
     }
 }

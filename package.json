@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.445.0",
+    "@aws-sdk/s3-request-presigner": "^3.445.0",
     "@prisma/client": "^5.4.1",
     "@quixo3/prisma-session-store": "^3.1.13",
     "bcrypt": "^5.1.1",
