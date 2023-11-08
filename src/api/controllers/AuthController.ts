@@ -24,6 +24,12 @@ export class AuthController {
         return responseFormatter(user);
     }
 
+    @Get('/me')
+    public async me(@Req() request) {
+        return responseFormatter(request.session.user);
+    }
+
+    // TODO: Remove this
     @Get('/sessions')
     public async getSessions() {
         return await this.authService.getSessions();
