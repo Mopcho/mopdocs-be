@@ -1,8 +1,8 @@
-import { Prisma } from "@prisma/client";
-import { AuthService, UserLoginData } from "../services/AuthService";
+import { AuthService } from "../services/AuthService";
 import { Service } from "typedi";
 import { Body, Delete, Get, JsonController, Post, Req } from "routing-controllers";
 import { responseFormatter } from "../utils";
+import { UserCreateInput, UserLoginData } from "src/database/types";
 
 @Service()
 @JsonController('/auth')
@@ -10,7 +10,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService) { }
 
     @Post('/register')
-    public async register(@Body() userCreateData: Prisma.UserCreateInput) {
+    public async register(@Body() userCreateData: UserCreateInput) {
         const serviceResponse = await this.authService.register(userCreateData)
         return responseFormatter(serviceResponse);
     }

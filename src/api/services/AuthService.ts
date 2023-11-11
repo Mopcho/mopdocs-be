@@ -2,18 +2,13 @@
 import { Database } from "src/database/db";
 import { comparePassword, hashPassword } from "../utils";
 import { Service } from "typedi";
-import { UserCreateInput } from "src/database/types";
+import { UserCreateInput, UserLoginData } from "src/database/types";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { Logger, LoggerInterface } from "src/decorators/Logger";
 import { ValidationError } from "../errors/ValidationError";
 import { UserLoginDataValidator, UserValidator } from "../validators";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
-
-export interface UserLoginData {
-    email: string;
-    password: string;
-}
 
 @Service()
 export class AuthService {
@@ -27,7 +22,7 @@ export class AuthService {
                 throw new ValidationError(fromZodError(err).message)
             }
         }
-        this.log.info("Register hit");
+
         if (!userData.password || !userData.email) {
             throw new ValidationError('All fields must be filled');
         }
@@ -54,7 +49,7 @@ export class AuthService {
                 throw new ValidationError(fromZodError(err).message)
             }
         }
-        this.log.info("Login hit");
+
         const user = await this.database.findUnique({ email: userData.email });
 
         if (!user) {
