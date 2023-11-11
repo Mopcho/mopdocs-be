@@ -15,7 +15,7 @@ export class FileService {
         return this.s3Service.generatePutPreSignedUrl({ userId });
     }
 
-    public createFile(data: Prisma.FileCreateInput) {
+    public createFile(data: Prisma.FileCreateArgs) {
         return this.database.files.create(data);
     }
 

@@ -7,41 +7,35 @@ export class Database {
     constructor() { }
 
     files = {
-        create: (data: Prisma.FileCreateInput) => {
-            return prisma.file.create({ data });
+        create: (data: Prisma.FileCreateArgs) => {
+            return prisma.file.create(data);
         },
-        deleteAll: () => {
-            return prisma.file.deleteMany();
+        deleteAll: (data?: Prisma.FileDeleteManyArgs) => {
+            return prisma.file.deleteMany(data);
         },
-        find: () => {
-            return prisma.file.findMany();
+        find: (data?: Prisma.FileFindManyArgs) => {
+            return prisma.file.findMany(data);
         },
     };
 
     sessions = {
-        find: () => {
-            return prisma.session.findMany();
+        find: (data?: Prisma.SessionFindManyArgs) => {
+            return prisma.session.findMany(data);
         },
-        deleteAll: () => {
-            return prisma.session.deleteMany();
+        deleteAll: (data?: Prisma.SessionDeleteManyArgs) => {
+            return prisma.session.deleteMany(data);
         },
     };
 
     users = {
-        create: (createData: Prisma.UserCreateInput) => {
-            return prisma.user.create({
-                data: createData
-            });
+        create: (data: Prisma.UserCreateArgs) => {
+            return prisma.user.create(data);
         },
-        find: (searchData?: Prisma.UserWhereInput) => {
-            return prisma.user.findMany({
-                where: searchData
-            });
+        find: (data?: Prisma.UserFindManyArgs) => {
+            return prisma.user.findMany(data);
         },
-        findUnique: (searchData: Prisma.UserWhereUniqueInput) => {
-            return prisma.user.findUnique({
-                where: searchData
-            });
+        findUnique: (data: Prisma.UserFindUniqueArgs) => {
+            return prisma.user.findUnique(data);
         },
     };
 }

@@ -4,7 +4,6 @@ import { comparePassword, hashPassword } from "../utils";
 import { Service } from "typedi";
 import { UserCreateInput, UserLoginData } from "src/database/types";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
-import { Logger, LoggerInterface } from "src/decorators/Logger";
 import { ValidationError } from "../errors/ValidationError";
 import { UserLoginDataValidator, UserValidator } from "../validators";
 import { ZodError } from "zod";
@@ -12,7 +11,7 @@ import { fromZodError } from "zod-validation-error";
 
 @Service()
 export class AuthService {
-    constructor(private readonly database: Database, @Logger(__filename) private log: LoggerInterface) { }
+    constructor(private readonly database: Database) { }
 
     public async register(userData: UserCreateInput) {
         try {
@@ -28,7 +27,7 @@ export class AuthService {
         }
         const hashedPassword = await hashPassword(userData.password);
         userData.password = hashedPassword;
-        const response = this.database.users.create(userData);
+        const response = this.database.users.create({ data: userData });
 
         return response;
     }
@@ -50,7 +49,7 @@ export class AuthService {
             }
         }
 
-        const user = await this.database.users.findUnique({ email: userData.email });
+        const user = await this.database.users.findUnique({ where: { email: userData.email } });
 
         if (!user) {
             throw new InvalidCredentialsError();
