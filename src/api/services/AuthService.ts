@@ -28,17 +28,17 @@ export class AuthService {
         }
         const hashedPassword = await hashPassword(userData.password);
         userData.password = hashedPassword;
-        const response = this.database.createUser(userData);
+        const response = this.database.users.create(userData);
 
         return response;
     }
 
     public async getSessions() {
-        return this.database.getSessions();
+        return this.database.sessions.find();
     }
 
     public async deleteAllSessions() {
-        return this.database.deleteAllSessions();
+        return this.database.sessions.deleteAll();
     }
 
     public async login(userData: UserLoginData) {
@@ -50,7 +50,7 @@ export class AuthService {
             }
         }
 
-        const user = await this.database.findUnique({ email: userData.email });
+        const user = await this.database.users.findUnique({ email: userData.email });
 
         if (!user) {
             throw new InvalidCredentialsError();

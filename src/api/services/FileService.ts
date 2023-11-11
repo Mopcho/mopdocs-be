@@ -16,14 +16,14 @@ export class FileService {
     }
 
     public createFile(data: FileCreateData) {
-        return this.database.createFile(data);
+        return this.database.files.create(data);
     }
 
     public findFiles() {
-        return this.database.findFiles();
+        return this.database.files.find();
     }
 
     public deleteAllFiles() {
-        return this.database.deleteAllFiles();
+        return this.database.files.deleteAll();
     }
 }
