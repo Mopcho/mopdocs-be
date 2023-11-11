@@ -1,25 +1,14 @@
 import { Service } from "typedi";
 import { prisma } from "./prisma";
 import { Prisma } from "@prisma/client";
-import { FileCreateData } from "./types";
 
 @Service()
 export class Database {
     constructor() { }
 
     files = {
-        create: (data: FileCreateData) => {
-            return prisma.file.create({
-                data: {
-                    awskey: data.awskey,
-                    contentType: data.contentType,
-                    owner: {
-                        connect: {
-                            id: data.ownerId
-                        }
-                    }
-                }
-            });
+        create: (data: Prisma.FileCreateInput) => {
+            return prisma.file.create({ data });
         },
         deleteAll: () => {
             return prisma.file.deleteMany();

@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { Service } from 'typedi';
 import { S3Service } from './S3Service';
 import { Database } from 'src/database/db';
-import { FileCreateData } from 'src/database/types';
+import { Prisma } from "@prisma/client";
 
 export const prisma = new PrismaClient();
 
@@ -15,7 +15,7 @@ export class FileService {
         return this.s3Service.generatePutPreSignedUrl({ userId });
     }
 
-    public createFile(data: FileCreateData) {
+    public createFile(data: Prisma.FileCreateInput) {
         return this.database.files.create(data);
     }
 
