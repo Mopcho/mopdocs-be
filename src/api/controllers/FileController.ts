@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { FileService } from "../services/FileService";
-import { Delete, Get, JsonController, Post, Session, UseBefore } from "routing-controllers";
+import { Delete, Get, JsonController, Post, QueryParam, Session, UseBefore } from "routing-controllers";
 import { isAuthenticated } from "../middlewares/IsAuthenticated";
 import { responseFormatter } from "../utils";
 
@@ -16,8 +16,8 @@ export class FileController {
     }
 
     @Get()
-    public async findFiles() {
-        return responseFormatter(await this.fileService.findFiles());
+    public async findFiles(@QueryParam('page') page, @QueryParam('pageSize') pageSize) {
+        return responseFormatter(await this.fileService.findFiles({ page, pageSize }));
     }
 
     @Delete()

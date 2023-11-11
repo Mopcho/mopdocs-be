@@ -3,6 +3,8 @@ import { Service } from 'typedi';
 import { S3Service } from './S3Service';
 import { Database } from 'src/database/db';
 import { Prisma } from "@prisma/client";
+import { getPagination } from '../utils';
+import { Pagination } from '../types';
 
 export const prisma = new PrismaClient();
 
@@ -19,8 +21,12 @@ export class FileService {
         return this.database.files.create(data);
     }
 
-    public findFiles() {
-        return this.database.files.find();
+    public findFiles(pagination?: Pagination) {
+        const prismaPagination = getPagination(pagination);
+        return this.database.files.find({
+            take: prismaPagination.take,
+            skip: prismaPagination.skip
+        });
     }
 
     public deleteAllFiles() {
