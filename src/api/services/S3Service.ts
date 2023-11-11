@@ -18,8 +18,12 @@ export class S3Service {
         return randomId;
     }
 
-    public async generatePreSignedUrl() {
-        const preSignedUrl = await getSignedUrl(this.s3Client, new PutObjectCommand({ Bucket: bucketName, Key: this.generateRandomKey() }))
+    public fetchMetadataForFile(key: string) {
+        return this.s3Client.headObject({ Bucket: bucketName, Key: key });
+    }
+
+    public async generatePutPreSignedUrl(metadata?: Record<string, string>) {
+        const preSignedUrl = await getSignedUrl(this.s3Client, new PutObjectCommand({ Bucket: bucketName, Key: this.generateRandomKey(), Metadata: metadata }))
         return { preSignedUrl };
     }
 }

@@ -12,11 +12,10 @@ datasource db {
 
 model File {
   id          String       @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
-  extension   String
+  name        String       @default("New File")
   awskey      String       @unique
   contentType String
-  status      RecordStatus @default(DELETED)
+  status      RecordStatus @default(ACTIVE)
 
   owner   User    @relation(fields: [ownerId], references: [id])
   ownerId String  @db.Uuid

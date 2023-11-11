@@ -13,6 +13,7 @@ import { isAuthenticated } from './api/middlewares/IsAuthenticated';
 import { CorsOptions } from 'cors';
 import { DeleteSessionOnExpiredDate } from './api/middlewares/CheckSession';
 import { S3 } from '@aws-sdk/client-s3';
+import { SNSController } from './api/controllers/SNSController';
 
 // Configure AWS S3
 const accessKeyId = process.env.AWS_KEY;
@@ -73,7 +74,7 @@ app.use(
 useExpressServer(app, {
     routePrefix: '/api',
     cors: corsConfig,
-    controllers: [AuthController, FileController],
+    controllers: [AuthController, FileController, SNSController],
     defaultErrorHandler: false,
     middlewares: [
         GlobalErrorHandler,

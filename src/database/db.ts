@@ -1,6 +1,7 @@
 import { Service } from "typedi";
 import { prisma } from "./prisma";
 import { Prisma } from "@prisma/client";
+import { FileCreateData } from "src/api/types";
 
 @Service()
 export class Database {
@@ -8,6 +9,28 @@ export class Database {
 
     async getSessions() {
         return prisma.session.findMany();
+    }
+
+    createFile(data: FileCreateData) {
+        return prisma.file.create({
+            data: {
+                awskey: data.awskey,
+                contentType: data.contentType,
+                owner: {
+                    connect: {
+                        id: data.ownerId
+                    }
+                }
+            }
+        });
+    }
+
+    deleteAllFiles() {
+        return prisma.file.deleteMany();
+    }
+
+    findFiles() {
+        return prisma.file.findMany();
     }
 
     async deleteAllSessions() {
