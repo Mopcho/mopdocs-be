@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { FileService } from "../services/FileService";
-import { Delete, Get, JsonController, Post, QueryParam, Session, UseBefore } from "routing-controllers";
+import { Delete, Get, JsonController, Param, Post, QueryParam, Session, UseBefore } from "routing-controllers";
 import { isAuthenticated } from "../middlewares/IsAuthenticated";
 import { responseFormatter } from "../utils";
 
@@ -23,5 +23,10 @@ export class FileController {
     @Delete()
     public async deleteAllFiles() {
         return responseFormatter(await this.fileService.deleteAllFiles());
+    }
+
+    @Delete('/:id')
+    public async deleteOne(@Param("id") id: string) {
+        return responseFormatter(await this.fileService.deleteOne(id));
     }
 }

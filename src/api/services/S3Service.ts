@@ -26,4 +26,8 @@ export class S3Service {
         const preSignedUrl = await getSignedUrl(this.s3Client, new PutObjectCommand({ Bucket: bucketName, Key: this.generateRandomKey(), Metadata: metadata }))
         return { preSignedUrl };
     }
+
+    public deleteFile(awsId: string) {
+        return this.s3Client.deleteObject({ Bucket: bucketName, Key: awsId });
+    }
 }

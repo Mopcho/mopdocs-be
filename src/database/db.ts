@@ -13,6 +13,9 @@ export class Database {
         deleteAll: (data?: Prisma.FileDeleteManyArgs) => {
             return prisma.file.deleteMany(data);
         },
+        deleteOne: (id: string) => {
+            return prisma.file.delete({ where: { awskey: id } });
+        },
         find: (data?: Prisma.FileFindManyArgs) => {
             return prisma.file.findMany(data);
         },

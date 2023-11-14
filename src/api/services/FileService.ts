@@ -32,4 +32,9 @@ export class FileService {
     public deleteAllFiles() {
         return this.database.files.deleteAll();
     }
+
+    public deleteOne(id: string) {
+        this.s3Service.deleteFile(id);
+        return this.database.files.deleteOne(id);
+    }
 }
