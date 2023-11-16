@@ -39,14 +39,14 @@ export class FileService {
         return this.database.files.deleteAll();
     }
 
-    public async deleteOne(id: string, ownerId: string) {
+    public async deleteOne(awskey: string, ownerId: string) {
         const user = await this.userService.getUser(ownerId);
 
         if (!user) {
             throw new NotFoundError('User not found');
         }
 
-        const file = await this.database.files.findUnique({ where: { id } });
+        const file = await this.database.files.findUnique({ where: { awskey } });
 
         if (!file) {
             throw new NotFoundError('File not found');
@@ -56,7 +56,7 @@ export class FileService {
             throw new AccessDeniedError('You have no access to this file');
         }
 
-        await this.s3Service.deleteFile(id);
-        return this.database.files.deleteOne(id);
+        await this.s3Service.deleteFile(awskey);
+        return this.database.files.deleteOne(awskey);
     }
 }
