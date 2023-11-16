@@ -16,8 +16,8 @@ export class FileController {
     }
 
     @Get()
-    public async findFiles(@QueryParam('page') page, @QueryParam('pageSize') pageSize) {
-        return responseFormatter(await this.fileService.findFiles({ page, pageSize }));
+    public async findFiles(@QueryParam('page') page, @QueryParam('pageSize') pageSize, @Session() session) {
+        return responseFormatter(await this.fileService.findFiles(session.user.id, { page, pageSize }));
     }
 
     @Delete()
@@ -26,7 +26,7 @@ export class FileController {
     }
 
     @Delete('/:id')
-    public async deleteOne(@Param("id") id: string) {
-        return responseFormatter(await this.fileService.deleteOne(id));
+    public async deleteOne(@Param("id") id: string, @Session() session) {
+        return responseFormatter(await this.fileService.deleteOne(id, session.user.id));
     }
 }

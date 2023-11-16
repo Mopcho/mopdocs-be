@@ -19,6 +19,9 @@ export class Database {
         find: (data?: Prisma.FileFindManyArgs) => {
             return prisma.file.findMany(data);
         },
+        findUnique: (data?: Prisma.FileFindUniqueArgs) => {
+            return prisma.file.findUnique(data);
+        },
     };
 
     sessions = {
