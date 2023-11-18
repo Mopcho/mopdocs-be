@@ -30,3 +30,5 @@ export const getPagination = (pagination?: Pagination) => {
 
     return { skip, take };
 }
+
+export const delay = (ms: number) => new Promise((resolve) => setTimeout(() => resolve(true), ms))

@@ -43,5 +43,42 @@ export class Database {
         findUnique: (data: Prisma.UserFindUniqueArgs) => {
             return prisma.user.findUnique(data);
         },
+        update: (data: Prisma.UserUpdateArgs) => {
+            return prisma.user.update(data);
+        }
     };
+
+    notification_sessions = {
+        getNotifications: async (searchData: Prisma.NotificationSessionWhereUniqueInput) => {
+            const response = await prisma.notificationSession.findUnique({
+                where: searchData,
+                select: {
+                    notifications: true
+                }
+            });
+
+            return response?.notifications;
+        },
+        create: (data: Prisma.NotificationSessionCreateArgs) => {
+            return prisma.notificationSession.create(data);
+        },
+        delete: (data: Prisma.NotificationSessionDeleteArgs) => {
+            return prisma.notificationSession.delete(data);
+        },
+        findUnique: (data: Prisma.NotificationSessionFindUniqueArgs) => {
+            return prisma.notificationSession.findUnique(data);
+        },
+        update: (data: Prisma.NotificationSessionUpdateArgs) => {
+            return prisma.notificationSession.update(data);
+        },
+        findMany: (data: Prisma.NotificationSessionFindManyArgs) => {
+            return prisma.notificationSession.findMany(data);
+        }
+    }
+
+    notifications = {
+        delete: (data: Prisma.NotificationDeleteArgs) => {
+            return prisma.notification.delete(data);
+        }
+    }
 }

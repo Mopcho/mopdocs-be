@@ -44,13 +44,14 @@ enum RecordStatus {
 }
 
 model User {
-  id             String        @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  password       String
-  email          String        @unique
-  username       String        @default("Annonymous")
-  email_verified Boolean?      @default(false)
-  file           File[]
-  status         RecordStatus? @default(ACTIVE)
+  id                  String               @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  password            String
+  email               String               @unique
+  username            String               @default("Annonymous")
+  email_verified      Boolean?             @default(false)
+  file                File[]
+  status              RecordStatus?        @default(ACTIVE)
+  notificationSession NotificationSession?
 
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -63,4 +64,32 @@ model Session {
   sid       String   @unique
   data      String
   expiresAt DateTime
+}
+
+model NotificationSession {
+  id String @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique @db.Uuid
+
+  updatedAt     DateTime       @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt     DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  notifications Notification[]
+
+  @@map("notification_sessions")
+}
+
+model Notification {
+  id String @id @unique @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+
+  type String
+  data String
+
+  notification_session    NotificationSession @relation(fields: [notification_session_id], references: [id])
+  notification_session_id String              @db.Uuid
+
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@map("notifications")
 }
