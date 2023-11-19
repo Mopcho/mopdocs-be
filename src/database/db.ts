@@ -62,6 +62,9 @@ export class Database {
         create: (data: Prisma.NotificationSessionCreateArgs) => {
             return prisma.notificationSession.create(data);
         },
+        upsert: (data: Prisma.NotificationSessionUpsertArgs) => {
+            return prisma.notificationSession.upsert(data);
+        },
         delete: (data: Prisma.NotificationSessionDeleteArgs) => {
             return prisma.notificationSession.delete(data);
         },
@@ -70,6 +73,9 @@ export class Database {
         },
         update: (data: Prisma.NotificationSessionUpdateArgs) => {
             return prisma.notificationSession.update(data);
+        },
+        updateMany: (data: Prisma.NotificationSessionUpdateManyArgs) => {
+            return prisma.notificationSession.updateMany(data);
         },
         findMany: (data: Prisma.NotificationSessionFindManyArgs) => {
             return prisma.notificationSession.findMany(data);
