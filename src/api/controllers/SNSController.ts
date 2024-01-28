@@ -80,15 +80,9 @@ export class SNSController {
             const metadata = await this.s3Service.fetchMetadataForFile(record.s3.object.key);
 
             const file = await this.fileService.createFile({
-                data: {
-                    awskey: record.s3.object.key,
-                    contentType: metadata.ContentType,
-                    owner: {
-                        connect: {
-                            id: metadata.Metadata.userid
-                        }
-                    },
-                }
+                awsKey: record.s3.object.key,
+                contentType: metadata.ContentType,
+                ownerId: metadata.Metadata.userid
             });
 
             response.push(file);

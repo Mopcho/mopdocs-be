@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { Service } from 'typedi';
 import { S3Service } from './S3Service';
 import { Database } from 'src/database/db';
-import { Prisma } from "@prisma/client";
 import { getPagination } from '../utils';
 import { Pagination } from '../types';
 import { UserService } from './UserService';
@@ -10,6 +9,12 @@ import { NotFoundError } from 'routing-controllers';
 import { AccessDeniedError } from '../errors/AccessDeniedError';
 
 export const prisma = new PrismaClient();
+
+interface FileCreateArgs {
+    awsKey: string;
+    contentType: string;
+    ownerId: string;
+}
 
 @Service()
 export class FileService {
@@ -20,8 +25,37 @@ export class FileService {
         return this.s3Service.generatePutPreSignedUrl({ userId });
     }
 
-    public createFile(data: Prisma.FileCreateArgs) {
-        return this.database.files.create(data);
+    public async createFile(data: FileCreateArgs) {
+        const dbResponse = this.database.files.create({
+            data: {
+                awskey: data.awsKey,
+                contentType: data.contentType,
+                owner: {
+                    connect: {
+                        id: data.ownerId
+                    }
+                }
+            }
+        });
+
+        // Adds a new notification for every user session in the database
+
+        const userSessions = await this.database.notification_sessions.findMany({ where: { userId: data.ownerId } });
+
+        await Promise.all(userSessions.map((session) => {
+            return this.database.notification_sessions.update({
+                where: { id: session.id }, data: {
+                    notifications: {
+                        create: {
+                            type: 'update',
+                            data: 'files',
+                        }
+                    }
+                }
+            })
+        }));
+
+        return dbResponse;
     }
 
     public findFiles(ownerId: string, pagination?: Pagination) {
@@ -57,6 +91,24 @@ export class FileService {
         }
 
         await this.s3Service.deleteFile(awskey);
-        return this.database.files.deleteOne(awskey);
+        const dbResponse = this.database.files.deleteOne(awskey);
+
+        // Adds a new notification for every user session in the database
+        const userSessions = await this.database.notification_sessions.findMany({ where: { userId: user.id } });
+
+        await Promise.all(userSessions.map((session) => {
+            return this.database.notification_sessions.update({
+                where: { id: session.id }, data: {
+                    notifications: {
+                        create: {
+                            type: 'update',
+                            data: 'files',
+                        }
+                    }
+                }
+            })
+        }));
+
+        return dbResponse;
     }
 }

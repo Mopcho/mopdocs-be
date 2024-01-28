@@ -55,7 +55,7 @@ export class EventService {
                     resolve(true);
                 }
                 notifications.map(async (notification) => {
-                    const stillOpen = sendEvent({ type: notification.type, data: JSON.stringify(notification.data) });
+                    const stillOpen = sendEvent({ type: notification.type, data: notification.data });
                     await this.db.notifications.delete({ where: { id: notification.id } });
                     if (!stillOpen) {
                         resolve(true);
