@@ -35,7 +35,6 @@ export class EventsController {
         this.eventService.subscribe(session.user.id, sendEvent);
 
         res.on('close', () => {
-            console.log('Closing');
             res.end();
         });
 
