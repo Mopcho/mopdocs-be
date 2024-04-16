@@ -16,8 +16,8 @@ export class FileController {
     }
 
     @Get()
-    public async findFiles(@QueryParam('page') page, @QueryParam('pageSize') pageSize, @Session() session) {
-        return responseFormatter(await this.fileService.findFiles(session.user.id, { page, pageSize }));
+    public async findFiles(@QueryParam('page') page, @QueryParam('pageSize') pageSize, @QueryParam("fileType") fileType, @Session() session) {
+        return responseFormatter(await this.fileService.findFiles(session.user.id, { page, pageSize }, fileType));
     }
 
     @Delete()

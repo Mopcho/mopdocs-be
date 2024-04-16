@@ -58,11 +58,14 @@ export class FileService {
         return dbResponse;
     }
 
-    public findFiles(ownerId: string, pagination?: Pagination) {
+    public findFiles(ownerId: string, pagination?: Pagination, fileType?: string) {
         const prismaPagination = getPagination(pagination);
         return this.database.files.find({
             where: {
-                ownerId
+                ownerId,
+                contentType: {
+                    contains: fileType
+                }
             },
             take: prismaPagination.take,
             skip: prismaPagination.skip
