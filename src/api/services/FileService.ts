@@ -58,6 +58,26 @@ export class FileService {
         return dbResponse;
     }
 
+    public async findFile(ownerId: string, awskey: string) {
+        const file = await this.database.files.findUnique({
+            where: {
+                awskey,
+                ownerId,
+            },
+        });
+
+        if (!file) {
+            return new NotFoundError("File Not Found");
+        }
+
+        const presignedUrl = await this.s3Service.generateGetPrsignedUrl(file.awskey);
+
+        return {
+            presignedUrl,
+            ...file
+        }
+    }
+
     public findFiles(ownerId: string, pagination?: Pagination, fileType?: string) {
         const prismaPagination = getPagination(pagination);
         return this.database.files.find({

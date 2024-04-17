@@ -20,6 +20,11 @@ export class FileController {
         return responseFormatter(await this.fileService.findFiles(session.user.id, { page, pageSize }, fileType));
     }
 
+    @Get('/:awskey')
+    public async findFile(@Session() session, @Param("awskey") awskey) {
+        return responseFormatter(await this.fileService.findFile(session.user.id, awskey));
+    }
+
     @Delete()
     public async deleteAllFiles() {
         return responseFormatter(await this.fileService.deleteAllFiles());

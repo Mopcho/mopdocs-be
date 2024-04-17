@@ -1,5 +1,5 @@
 import { Inject, Service } from 'typedi';
-import { PutObjectCommand, S3 } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const bucketName = process.env.AWS_BUCKET_NAME;
@@ -29,5 +29,10 @@ export class S3Service {
 
     public deleteFile(awsId: string) {
         return this.s3Client.deleteObject({ Bucket: bucketName, Key: awsId });
+    }
+
+    public async generateGetPrsignedUrl(awsId: string) {
+        const presignedUrl = await getSignedUrl(this.s3Client, new GetObjectCommand({ Bucket: bucketName, Key: awsId }));
+        return presignedUrl;
     }
 }
