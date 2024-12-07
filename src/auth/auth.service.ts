@@ -1,15 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
+import { Knex } from 'knex';
+import { KNEX_CONNECTION } from 'src/knex/constants';
 
 @Injectable()
 export class AuthService {
-    constructor(private configService: ConfigService) {}
+	constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
-    async signIn() {
-        return { ok: this.configService.get<string>('DATABASE_USER') }
-    }
+	async signIn() {
+		const response = await this.knex().select('*').from('users');
+		return { data: response };
+	}
 
-    async signUp() {
-        return { ok: true }
-    }
+	async signUp() {
+		return { ok: true };
+	}
 }

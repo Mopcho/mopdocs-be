@@ -5,8 +5,8 @@ services:
    image: postgres:13.5-alpine
    restart: always
    environment:
-     POSTGRES_DB: filemanagerdb
-     POSTGRES_USER: admin
+     POSTGRES_DB: mopdocs
+     POSTGRES_USER: mopcho
      POSTGRES_PASSWORD: secret
      PGDATA: /var/lib/postgresql/data
    ports:
