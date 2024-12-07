@@ -3,6 +3,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { KnexModule } from './knex/knex.module';
 import { UsersModule } from './users/users.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from './response/response.interceptor';
 
 @Module({
 	imports: [
@@ -20,6 +22,12 @@ import { UsersModule } from './users/users.module';
 		}),
 		AuthModule,
 		UsersModule,
+	],
+	providers: [
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: ResponseInterceptor,
+		},
 	],
 })
 export class AppModule {}

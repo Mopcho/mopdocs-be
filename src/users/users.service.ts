@@ -18,11 +18,18 @@ export class UsersService {
 	}
 
 	findUnique(userFindUniqueData: UserFindUniqueData) {
-		return this.knex<User>('users').select('*').where(userFindUniqueData);
+		return this.knex<User>('users')
+			.select('*')
+			.where(userFindUniqueData)
+			.first();
 	}
 
-	create(userCreateData: UserCreateData) {
-		return this.knex<User>('users').insert(userCreateData);
+	async create(userCreateData: UserCreateData) {
+		const [createdUser] = await this.knex<User>('users')
+			.insert(userCreateData)
+			.returning('*');
+
+		return createdUser;
 	}
 
 	update(
