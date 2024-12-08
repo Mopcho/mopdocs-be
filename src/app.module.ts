@@ -5,6 +5,7 @@ import { KnexModule } from './knex/knex.module';
 import { UsersModule } from './users/users.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response/response.interceptor';
+import { FilesModule } from './files/files.module';
 
 @Module({
 	imports: [
@@ -22,6 +23,7 @@ import { ResponseInterceptor } from './response/response.interceptor';
 		}),
 		AuthModule,
 		UsersModule,
+		FilesModule,
 	],
 	providers: [
 		{
