@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common';
 import { FilesService } from './files.service';
 import { FilesController } from './files.controller';
 import { MulterModule } from '@nestjs/platform-express';
-import path from 'path';
+import path, { resolve } from 'path';
 import { AuthModule } from 'src/auth/auth.module';
+import { access, mkdir } from 'fs/promises';
+import { SAVE_FILE_DIR } from './constants';
 
 @Module({
 	imports: [
@@ -13,4 +15,10 @@ import { AuthModule } from 'src/auth/auth.module';
 	providers: [FilesService],
 	controllers: [FilesController],
 })
-export class FilesModule {}
+export class FilesModule {
+	async onModuleInit() {
+		try {
+			await mkdir(resolve(SAVE_FILE_DIR));
+		} catch (err) {}
+	}
+}

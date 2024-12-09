@@ -1,18 +1,32 @@
-import { Injectable } from '@nestjs/common';
-import { createReadStream } from 'fs';
-import { join } from 'path';
-import fs from 'fs/promises';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { createReadStream, existsSync } from 'fs';
+import { join, resolve } from 'path';
+import { readdir, stat } from 'fs/promises';
+import { SAVE_FILE_DIR } from './constants';
 
 @Injectable()
 export class FilesService {
-	createReadStream(fileId: string) {
-		const file = createReadStream(join(__dirname, '../../data', fileId));
+	async createReadStream(fileId: string, userId: string) {
+		const filePath = resolve(SAVE_FILE_DIR, userId, fileId);
+
+		await stat(filePath).catch((err) => {
+			throw new BadRequestException(`File ${fileId} does not exist`);
+		});
+
+		const file = createReadStream(filePath);
 
 		return file;
 	}
 
-	async listFiles() {
-		const directory = await fs.readdir(join(__dirname, '../../data'));
+	async listFiles(userId: string) {
+		const filePath = join(SAVE_FILE_DIR, userId);
+		const userFolderExists = existsSync(filePath);
+
+		if (!userFolderExists) {
+			return [];
+		}
+
+		const directory = await readdir(filePath);
 
 		return directory;
 	}
