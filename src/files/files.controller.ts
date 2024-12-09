@@ -1,5 +1,6 @@
 import {
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Post,
@@ -31,11 +32,11 @@ declare global {
 }
 
 @Controller('files')
+@UseGuards(AuthGuard)
 export class FilesController {
 	constructor(private readonly filesService: FilesService) {}
 
 	@Post('upload')
-	@UseGuards(AuthGuard)
 	@UseInterceptors(
 		FileInterceptor('file', {
 			storage: diskStorage({
@@ -64,15 +65,18 @@ export class FilesController {
 	}
 
 	@Get(':fileId')
-	@UseGuards(AuthGuard)
 	async getFile(@Param('fileId') fileId, @Response() res, @Request() req) {
-		const file = await this.filesService.createReadStream(fileId, req.user.sub);
+		const file = await this.filesService.createReadStream(req.user.sub, fileId);
 		file.pipe(res);
 	}
 
-	@UseGuards(AuthGuard)
 	@Get()
 	listFiles(@Request() req) {
 		return this.filesService.listFiles(req.user.sub);
+	}
+
+	@Delete(':fileId')
+	deleteFile(@Param('fileId') fileId, @Request() req) {
+		return this.filesService.deleteFile(req.user.sub, fileId);
 	}
 }

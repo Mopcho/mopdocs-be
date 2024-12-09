@@ -1,13 +1,17 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { createReadStream, existsSync } from 'fs';
 import { join, resolve } from 'path';
-import { readdir, stat } from 'fs/promises';
+import { readdir, stat, unlink } from 'fs/promises';
 import { SAVE_FILE_DIR } from './constants';
 
 @Injectable()
 export class FilesService {
-	async createReadStream(fileId: string, userId: string) {
-		const filePath = resolve(SAVE_FILE_DIR, userId, fileId);
+	async createReadStream(userId: string, fileId: string) {
+		const filePath = this.resolveFilePath(userId, fileId);
 
 		await stat(filePath).catch((err) => {
 			throw new BadRequestException(`File ${fileId} does not exist`);
@@ -19,7 +23,8 @@ export class FilesService {
 	}
 
 	async listFiles(userId: string) {
-		const filePath = join(SAVE_FILE_DIR, userId);
+		const filePath = this.resolveFilePath(userId);
+
 		const userFolderExists = existsSync(filePath);
 
 		if (!userFolderExists) {
@@ -29,5 +34,23 @@ export class FilesService {
 		const directory = await readdir(filePath);
 
 		return directory;
+	}
+
+	async deleteFile(userId: string, fileId: string) {
+		const filePath = this.resolveFilePath(userId, fileId);
+
+		const fileExists = existsSync(filePath);
+
+		if (!fileExists) {
+			throw new NotFoundException(`File with id: ${fileId} not found`);
+		}
+
+		await unlink(filePath);
+
+		return { ok: true };
+	}
+
+	private resolveFilePath(userId: string, fileId: string = '') {
+		return resolve(SAVE_FILE_DIR, userId, fileId);
 	}
 }
