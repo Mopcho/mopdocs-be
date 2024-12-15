@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Controller,
 	Delete,
 	Get,
@@ -18,6 +19,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { resolve } from 'path';
 import { mkdir } from 'fs/promises';
 import { SAVE_FILE_DIR } from './constants';
+import { v4 as uuidv4 } from 'uuid';
 
 declare global {
 	namespace Express {
@@ -53,15 +55,24 @@ export class FilesController {
 					}
 				},
 				filename: (req, file, cb) => {
-					const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-					const originalName = file.originalname;
-					cb(null, `${uniqueSuffix}-${originalName}`);
+					cb(null, uuidv4());
 				},
 			}),
 		}),
 	)
-	uploadFile(@UploadedFile() file: Express.Multer.File) {
-		return file;
+	uploadFile(@UploadedFile() file: Express.Multer.File, @Request() req) {
+		if (!file) {
+			throw new BadRequestException('File upload fail');
+		}
+		return this.filesService.saveFileData(
+			{
+				...file,
+				originalName: file.originalname,
+				fileName: file.filename,
+				mimeType: file.mimetype,
+			},
+			req.user.sub,
+		);
 	}
 
 	@Get(':fileId')
