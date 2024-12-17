@@ -1,15 +1,21 @@
-export interface User {
+export interface UserEntity {
 	id: string;
 	email: string;
-	username: string;
+	username?: string;
 	password: string;
+	createdAt: string;
+	updatedAt: string;
 }
 
-export type UserCreateData = Pick<User, 'email' | 'password'> &
-	Partial<Pick<User, 'username'>>;
+export type UserCreateData = Pick<UserEntity, 'email' | 'password'> &
+	Partial<Pick<UserEntity, 'id' | 'username'>>;
 
-export type UserUpdateData = Partial<Omit<User, 'id'>>;
+export type UserUpdateData = Partial<
+	Omit<UserEntity, 'id' | 'createdAt' | 'updatedAt'>
+>;
 
-export type UserFindData = Partial<User>;
+export type UserFindData = Partial<UserEntity>;
 
-export type UserFindUniqueData = Pick<User, 'id'> | Pick<User, 'email'>;
+export type UserFindUniqueData =
+	| Pick<UserEntity, 'id'>
+	| Pick<UserEntity, 'email'>;

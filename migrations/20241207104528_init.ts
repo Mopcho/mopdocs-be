@@ -20,6 +20,36 @@ export async function up(knex: Knex): Promise<void> {
 				.notNullable();
 	});
 
+	await knex.schema.createTable('folders', function (table) {
+		table
+			.uuid('id', { primaryKey: true })
+			.notNullable()
+			.unique()
+			.defaultTo(knex.fn.uuid()),
+			table.string('name', 255).notNullable(),
+			table.string('label', 255).nullable(),
+			table.uuid('parentId').unsigned().index(),
+			table.uuid('userId').unsigned(),
+			table
+				.foreign('parentId')
+				.references('id')
+				.inTable('folders')
+				.onDelete('CASCADE'),
+			table
+				.foreign('userId')
+				.references('id')
+				.inTable('users')
+				.onDelete('CASCADE'),
+			table
+				.timestamp('createdAt', { useTz: true })
+				.defaultTo(knex.fn.now())
+				.notNullable(),
+			table
+				.timestamp('updatedAt', { useTz: true })
+				.defaultTo(knex.fn.now())
+				.notNullable();
+	});
+
 	return knex.schema.createTable('files', function (table) {
 		table
 			.uuid('id', { primaryKey: true })
@@ -27,7 +57,7 @@ export async function up(knex: Knex): Promise<void> {
 			.unique()
 			.defaultTo(knex.fn.uuid()),
 			table.string('mimeType', 255).notNullable(),
-			table.string('fileName', 255).notNullable(),
+			table.string('name', 255).notNullable(),
 			table.bigint('size').notNullable(),
 			table.string('label', 255).nullable(),
 			table.uuid('parentId').unsigned().index(),
@@ -35,7 +65,7 @@ export async function up(knex: Knex): Promise<void> {
 			table
 				.foreign('parentId')
 				.references('id')
-				.inTable('files')
+				.inTable('folders')
 				.onDelete('CASCADE'),
 			table
 				.foreign('userId')
@@ -55,5 +85,6 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
 	await knex.schema.dropTable('files');
+	await knex.schema.dropTable('folders');
 	return knex.schema.dropTable('users');
 }

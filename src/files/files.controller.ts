@@ -21,24 +21,12 @@ import { mkdir } from 'fs/promises';
 import { SAVE_FILE_DIR } from './constants';
 import { v4 as uuidv4 } from 'uuid';
 
-declare global {
-	namespace Express {
-		interface Request {
-			user?: {
-				sub: string;
-				email: string;
-				username: string;
-			};
-		}
-	}
-}
-
 @Controller('files')
 @UseGuards(AuthGuard)
 export class FilesController {
 	constructor(private readonly filesService: FilesService) {}
 
-	@Post('upload')
+	@Post()
 	@UseInterceptors(
 		FileInterceptor('file', {
 			storage: diskStorage({
@@ -64,26 +52,19 @@ export class FilesController {
 		if (!file) {
 			throw new BadRequestException('File upload fail');
 		}
-		return this.filesService.saveFileData(
-			{
-				...file,
-				originalName: file.originalname,
-				fileName: file.filename,
-				mimeType: file.mimetype,
-			},
-			req.user.sub,
-		);
+		return this.filesService.createFile({
+			...file,
+			name: file.originalname,
+			id: file.filename,
+			mimeType: file.mimetype,
+			userId: req.user.sub,
+		});
 	}
 
 	@Get(':fileId')
 	async getFile(@Param('fileId') fileId, @Response() res, @Request() req) {
 		const file = await this.filesService.createReadStream(req.user.sub, fileId);
 		file.pipe(res);
-	}
-
-	@Get()
-	listFiles(@Request() req) {
-		return this.filesService.listFiles(req.user.sub);
 	}
 
 	@Delete(':fileId')

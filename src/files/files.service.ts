@@ -9,27 +9,25 @@ import { createReadStream, existsSync } from 'fs';
 import { normalize, resolve } from 'path';
 import { stat, unlink } from 'fs/promises';
 import { SAVE_FILE_DIR } from './constants';
-import { SaveFileData } from './interfaces';
 import { KNEX_CONNECTION } from 'src/knex';
 import { Knex } from 'knex';
+import { FileCreateData } from './interfaces';
 
 @Injectable()
 export class FilesService {
 	private readonly logger = new Logger(FilesService.name);
 	constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
-	saveFileData(fileData: SaveFileData, userId: string) {
-		return this.knex('files')
-			.insert({
-				id: fileData.fileName,
-				fileName: fileData.originalName,
-				mimeType: fileData.mimeType,
-				size: fileData.size,
-				userId,
-			})
-			.returning('*');
+	/**
+	 * Create a file record in the database
+	 */
+	createFile(fileCreateData: FileCreateData) {
+		return this.knex('files').insert(fileCreateData).returning('*');
 	}
 
+	/**
+	 * Returns a read stream based on userId and fileId
+	 */
 	async createReadStream(userId: string, fileId: string) {
 		const filePath = this.getFullPath(userId, fileId);
 
@@ -42,10 +40,9 @@ export class FilesService {
 		return file;
 	}
 
-	async listFiles(userId: string) {
-		return this.knex.select('*').from('files').where({ userId });
-	}
-
+	/**
+	 * Deletes a file both from the database and from the filesystem
+	 */
 	async deleteFile(userId: string, fileId: string) {
 		// Delete from database
 		const databaseFile = await this.knex('files')
