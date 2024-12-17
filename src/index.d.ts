@@ -14,6 +14,7 @@ import {
 	WorkspacesUsersEntity,
 	WorkspacesUsersUpdateData,
 	WorkspaceUpdateData,
+	UserEntity,
 } from './entities';
 
 declare module 'knex/types/tables' {

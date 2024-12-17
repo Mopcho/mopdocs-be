@@ -67,8 +67,8 @@ export class WorkspacesService {
 	}
 
 	async addUserToWorkspace(
-		workspaceFindUniqueData: WorkspaceFindUniqueData,
 		userFindUniqueData: UserFindUniqueData,
+		workspaceFindUniqueData: WorkspaceFindUniqueData,
 	) {
 		const workspace = await this.findUnique(workspaceFindUniqueData);
 

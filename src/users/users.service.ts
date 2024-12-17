@@ -7,10 +7,14 @@ import {
 	UserFindUniqueData,
 	UserUpdateData,
 } from 'src/common/interfaces';
+import { WorkspacesService } from 'src/workspaces/workspaces.service';
 
 @Injectable()
 export class UsersService {
-	constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
+	constructor(
+		@Inject(KNEX_CONNECTION) private readonly knex: Knex,
+		private readonly workspaceService: WorkspacesService,
+	) {}
 
 	/**
 	 * Finds the first matching user
@@ -34,13 +38,26 @@ export class UsersService {
 			.insert(userCreateData)
 			.returning('*');
 
+		const userDefaultWorkspace = await this.workspaceService.create({
+			name: 'No Folder',
+			ownerId: createdUser.id,
+		});
+
+		await this.workspaceService.addUserToWorkspace(
+			{ id: createdUser.id },
+			{ id: userDefaultWorkspace.id },
+		);
+
 		return createdUser;
 	}
 
 	/**
 	 * Updates the user with the specified id in the database
 	 */
-	update(userUpdateData: UserUpdateData, userId: string) {
-		return this.knex('users').update(userUpdateData).where({ userId });
+	update(
+		userUpdateData: UserUpdateData,
+		userFindUniqueData: UserFindUniqueData,
+	) {
+		return this.knex('users').update(userUpdateData).where(userFindUniqueData);
 	}
 }
