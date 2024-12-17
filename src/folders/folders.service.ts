@@ -1,44 +1,65 @@
+import { Inject, Injectable } from '@nestjs/common';
 import {
-	Inject,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException,
-} from '@nestjs/common';
-import { FolderCreateData } from './interfaces';
+	FolderCreateData,
+	FolderFindData,
+	FolderFindUniqueData,
+	FolderUpdateData,
+} from 'src/common/interfaces';
 import { KNEX_CONNECTION } from 'src/knex';
 import { Knex } from 'knex';
+import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class FoldersService {
-	constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
+	constructor(
+		@Inject(KNEX_CONNECTION) private readonly knex: Knex,
+		private readonly filesService: FilesService,
+	) {}
 
-	createFolder(folderCreateData: FolderCreateData) {
-		return this.knex('folders')
+	async create(folderCreateData: FolderCreateData) {
+		const [createdFolder] = await this.knex('folders')
 			.insert(folderCreateData)
 			.into('folders')
 			.returning('*');
+
+		return createdFolder;
 	}
 
-	async listFiles(folderId: string, userId: string) {
-		const folder = await this.knex('folders')
+	findUnique(folderFindUniqueData: FolderFindUniqueData) {
+		return this.knex('folders')
 			.select('*')
 			.from('folders')
-			.where('id', folderId)
+			.where(folderFindUniqueData)
 			.first();
+	}
 
-		if (!folder) {
-			throw new NotFoundException(`Folder with id: ${folderId} not found`);
-		}
-
-		if (folder.userId !== userId) {
-			throw new UnauthorizedException();
-		}
-
-		const files = await this.knex('files')
+	findFirst(folderFindFirstData: FolderFindData) {
+		return this.knex('folders')
 			.select('*')
-			.from('files')
-			.where('parentId', folderId);
+			.from('folders')
+			.where(folderFindFirstData)
+			.first();
+	}
 
-		return files;
+	async update(
+		folderUpdateData: FolderUpdateData,
+		folderFindUniqueData: FolderFindUniqueData,
+	) {
+		const [updatedFolder] = await this.knex('folders')
+			.update(folderUpdateData)
+			.where(folderFindUniqueData)
+			.returning('*');
+
+		return updatedFolder;
+	}
+
+	async delete(folderFindUniqueData: FolderFindUniqueData) {
+		const [deletedFolder] = await this.knex('folders')
+			.delete()
+			.from('folders')
+			.where(folderFindUniqueData)
+			.returning('*');
+
+		return deletedFolder;
 	}
 }

@@ -1,8 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
 import { KNEX_CONNECTION } from 'src/knex';
-import { UserCreateData, UserUpdateData } from './interfaces';
-import { UserFindData, UserFindUniqueData } from 'src/entities';
+import {
+	UserCreateData,
+	UserFindData,
+	UserFindUniqueData,
+	UserUpdateData,
+} from 'src/common/interfaces';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +15,7 @@ export class UsersService {
 	/**
 	 * Finds the first matching user
 	 */
-	findOne(userFindData: UserFindData) {
+	findFirst(userFindData: UserFindData) {
 		return this.knex('users').select('*').where(userFindData).first();
 	}
 

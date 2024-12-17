@@ -8,6 +8,12 @@ import {
 	FolderUpdateData,
 	UserCreateData,
 	UserUpdateData,
+	WorkspaceCreateData,
+	WorkspaceEntity,
+	WorkspacesUsersCreateData,
+	WorkspacesUsersEntity,
+	WorkspacesUsersUpdateData,
+	WorkspaceUpdateData,
 } from './entities';
 
 declare module 'knex/types/tables' {
@@ -18,6 +24,16 @@ declare module 'knex/types/tables' {
 			FolderEntity,
 			FolderCreateData,
 			FolderUpdateData
+		>;
+		workspaces: Knex.CompositeTableType<
+			WorkspaceEntity,
+			WorkspaceCreateData,
+			WorkspaceUpdateData
+		>;
+		workspaces_users: Knex.CompositeTableType<
+			WorkspacesUsersEntity,
+			WorkspacesUsersCreateData,
+			WorkspacesUsersUpdateData
 		>;
 	}
 }

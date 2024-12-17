@@ -14,6 +14,7 @@ import { SAVE_FILE_DIR } from './constants';
 	],
 	providers: [FilesService],
 	controllers: [FilesController],
+	exports: [FilesService],
 })
 export class FilesModule {
 	async onModuleInit() {

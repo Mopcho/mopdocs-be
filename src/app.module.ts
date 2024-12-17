@@ -7,6 +7,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './response/response.interceptor';
 import { FilesModule } from './files/files.module';
 import { FoldersModule } from './folders/folders.module';
+import { WorkspacesModule } from './workspaces/workspaces.module';
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { FoldersModule } from './folders/folders.module';
 		UsersModule,
 		FilesModule,
 		FoldersModule,
+		WorkspacesModule,
 	],
 	providers: [
 		{

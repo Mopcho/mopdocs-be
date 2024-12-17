@@ -11,7 +11,12 @@ import { stat, unlink } from 'fs/promises';
 import { SAVE_FILE_DIR } from './constants';
 import { KNEX_CONNECTION } from 'src/knex';
 import { Knex } from 'knex';
-import { FileCreateData } from './interfaces';
+import {
+	FileCreateData,
+	FileFindData,
+	FileFindUniqueData,
+} from 'src/common/interfaces';
+import { FileDeleteData } from 'src/common/interfaces';
 
 @Injectable()
 export class FilesService {
@@ -19,9 +24,27 @@ export class FilesService {
 	constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
 	/**
+	 * Returns all file database records matching the search
+	 */
+	findAll(fileFindData: FileFindData) {
+		return this.knex('files').select('*').from('files').where(fileFindData);
+	}
+
+	/**
+	 * Find a file by an unique field
+	 */
+	findUnique(fileFindUniqueData: FileFindUniqueData) {
+		return this.knex('files')
+			.select('*')
+			.from('files')
+			.where(fileFindUniqueData)
+			.first();
+	}
+
+	/**
 	 * Create a file record in the database
 	 */
-	createFile(fileCreateData: FileCreateData) {
+	create(fileCreateData: FileCreateData) {
 		return this.knex('files').insert(fileCreateData).returning('*');
 	}
 
@@ -43,30 +66,48 @@ export class FilesService {
 	/**
 	 * Deletes a file both from the database and from the filesystem
 	 */
-	async deleteFile(userId: string, fileId: string) {
-		// Delete from database
-		const databaseFile = await this.knex('files')
-			.select('*')
-			.where({ id: fileId });
+	async delete(fileDeleteData: FileDeleteData) {
+		const { userId, ...fileFindUniqueData } = fileDeleteData;
 
-		if (!databaseFile) {
-			throw new NotFoundException(`File with id: ${fileId} not found`);
+		const deletedDatabaseRecord =
+			await this.deleteDatabaseRecord(fileFindUniqueData);
+
+		await this.deleteFilesystemRecord(userId, deletedDatabaseRecord.id);
+
+		return deletedDatabaseRecord;
+	}
+
+	/**
+	 * Delete a file from the database
+	 */
+	private async deleteDatabaseRecord(fileFindUniqueData: FileFindUniqueData) {
+		const databaseFileRecord = await this.findUnique(fileFindUniqueData);
+
+		if (!databaseFileRecord) {
+			throw new NotFoundException(`File not found in database`);
 		}
 
-		await this.knex('files').delete().where({ id: fileId });
+		const [deletedDatabaseRecord] = await this.knex('files')
+			.delete()
+			.where(fileFindUniqueData)
+			.returning('*');
 
-		// Delete from file system
+		return deletedDatabaseRecord;
+	}
+
+	/**
+	 * Delete a file from the filesystem
+	 */
+	private deleteFilesystemRecord(userId: string, fileId: string) {
 		const filePath = this.getFullPath(userId, fileId);
 
 		const fileExists = existsSync(filePath);
 
 		if (!fileExists) {
-			throw new NotFoundException(`File with id: ${fileId} not found`);
+			throw new NotFoundException(`File not found on filesystem`);
 		}
 
-		await unlink(filePath);
-
-		return databaseFile;
+		return unlink(filePath);
 	}
 
 	/**

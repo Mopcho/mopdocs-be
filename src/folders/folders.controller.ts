@@ -16,6 +16,9 @@ export class FoldersController {
 
 	@Get(':folderId')
 	listFiles(@Request() req, @Param('folderId') folderId) {
-		return this.foldersService.listFiles(folderId, req.user.sub);
+		return this.foldersService.listFolderFiles({
+			folderId,
+			userId: req.user.sub,
+		});
 	}
 }
