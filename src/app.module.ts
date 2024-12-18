@@ -8,9 +8,12 @@ import { ResponseInterceptor } from './response/response.interceptor';
 import { FilesModule } from './files/files.module';
 import { FoldersModule } from './folders/folders.module';
 import { WorkspacesModule } from './workspaces/workspaces.module';
+import { WorkspacesUsersModule } from './workspaces-users/workspaces-users.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
 	imports: [
+		EventEmitterModule.forRoot(),
 		ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
 		KnexModule.register({
 			debug: true,
@@ -28,6 +31,7 @@ import { WorkspacesModule } from './workspaces/workspaces.module';
 		FilesModule,
 		FoldersModule,
 		WorkspacesModule,
+		WorkspacesUsersModule,
 	],
 	providers: [
 		{

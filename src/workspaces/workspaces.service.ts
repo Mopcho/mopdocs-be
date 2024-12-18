@@ -6,16 +6,11 @@ import {
 	WorkspaceFindData,
 	WorkspaceFindUniqueData,
 	WorkspaceUpdateData,
-	UserFindUniqueData,
 } from 'src/common/interfaces';
-import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class WorkspacesService {
-	constructor(
-		@Inject(KNEX_CONNECTION) private readonly knex: Knex,
-		private readonly usersService: UsersService,
-	) {}
+	constructor(@Inject(KNEX_CONNECTION) private readonly knex: Knex) {}
 
 	findAll(workplaceFindData: WorkspaceFindData) {
 		return this.knex('workspaces')
@@ -63,23 +58,6 @@ export class WorkspacesService {
 			.delete()
 			.from('workspaces')
 			.where(workspaceFindUniqueData)
-			.returning('*');
-	}
-
-	async addUserToWorkspace(
-		userFindUniqueData: UserFindUniqueData,
-		workspaceFindUniqueData: WorkspaceFindUniqueData,
-	) {
-		const workspace = await this.findUnique(workspaceFindUniqueData);
-
-		const user = await this.usersService.findUnique(userFindUniqueData);
-
-		return this.knex('workspaces_users')
-			.insert({
-				userId: user.id,
-				workspaceId: workspace.id,
-			})
-			.into('workspaces_users')
 			.returning('*');
 	}
 }
