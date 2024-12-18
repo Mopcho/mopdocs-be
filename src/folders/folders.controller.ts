@@ -8,16 +8,8 @@ export class FoldersController {
 
 	@Post()
 	createFolder(@Body() createFolderDto: CreateFolderDto, @Request() req) {
-		return this.foldersService.createFolder({
+		return this.foldersService.create({
 			...createFolderDto,
-			userId: req.user.sub,
-		});
-	}
-
-	@Get(':folderId')
-	listFiles(@Request() req, @Param('folderId') folderId) {
-		return this.foldersService.listFolderFiles({
-			folderId,
 			userId: req.user.sub,
 		});
 	}

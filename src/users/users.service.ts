@@ -7,13 +7,14 @@ import {
 	UserFindUniqueData,
 	UserUpdateData,
 } from 'src/common/interfaces';
-import { WorkspacesService } from 'src/workspaces/workspaces.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserCreatedEvent } from '../common/events';
 
 @Injectable()
 export class UsersService {
 	constructor(
 		@Inject(KNEX_CONNECTION) private readonly knex: Knex,
-		private readonly workspaceService: WorkspacesService,
+		private readonly eventEmitter: EventEmitter2,
 	) {}
 
 	/**
@@ -38,14 +39,9 @@ export class UsersService {
 			.insert(userCreateData)
 			.returning('*');
 
-		const userDefaultWorkspace = await this.workspaceService.create({
-			name: 'No Folder',
-			ownerId: createdUser.id,
-		});
-
-		await this.workspaceService.addUserToWorkspace(
-			{ id: createdUser.id },
-			{ id: userDefaultWorkspace.id },
+		this.eventEmitter.emit(
+			'user.created',
+			new UserCreatedEvent({ id: createdUser.id }),
 		);
 
 		return createdUser;

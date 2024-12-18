@@ -52,7 +52,7 @@ export class FilesController {
 		if (!file) {
 			throw new BadRequestException('File upload fail');
 		}
-		return this.filesService.createFile({
+		return this.filesService.create({
 			...file,
 			name: file.originalname,
 			id: file.filename,
@@ -69,6 +69,6 @@ export class FilesController {
 
 	@Delete(':fileId')
 	deleteFile(@Param('fileId') fileId, @Request() req) {
-		return this.filesService.deleteFile(req.user.sub, fileId);
+		return this.filesService.delete({ userId: req.user.sub, id: fileId });
 	}
 }
