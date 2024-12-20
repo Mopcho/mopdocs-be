@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Knex } from 'knex';
 import {
 	UserFindUniqueData,
 	WorkspaceFindUniqueData,
 } from 'src/common/interfaces';
+import { UserEntity } from 'src/entities';
 import { KNEX_CONNECTION } from 'src/knex';
 import { UsersService } from 'src/users/users.service';
 import { WorkspacesService } from 'src/workspaces/workspaces.service';
@@ -33,5 +34,32 @@ export class WorkspacesUsersService {
 			})
 			.into('workspaces_users')
 			.returning('*');
+	}
+
+	async listWorkspaceUsers(workspaceId: string, userId: string) {
+		const workspacesUsersRecords = await this.knex('workspaces_users')
+			.select('*')
+			.from('workspaces_users')
+			.where('workspaceId', workspaceId);
+
+		const usersPromises: Promise<UserEntity>[] = [];
+
+		for (const workspacesUsersRecord of workspacesUsersRecords) {
+			const user = this.usersService.findUnique({
+				id: workspacesUsersRecord.userId,
+			});
+
+			usersPromises.push(user);
+		}
+
+		const users = await Promise.all(usersPromises);
+
+		const userIsPartOfTheWorkspace = users.find((user) => user.id === userId);
+
+		if (!userIsPartOfTheWorkspace) {
+			throw new UnauthorizedException();
+		}
+
+		return users;
 	}
 }
